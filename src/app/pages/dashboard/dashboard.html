@@ -1,0 +1,129 @@
+<div class="dashboard-container">
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <h1>Dashboard</h1>
+      <p class="text-muted">Welcome to the Insurance Management System</p>
+    </div>
+  </div>
+
+  <div class="row mb-4" *ngIf="(currentUser$ | async) as user">
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">User Role</h5>
+          <p class="card-text display-6">{{ user.role }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Total Contracts</h5>
+          <p class="card-text display-6">{{ totalContracts }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Active Contracts</h5>
+          <p class="card-text display-6">{{ activeContracts }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Total Payments</h5>
+          <p class="card-text display-6">{{ totalPayments }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Recent Contracts</h5>
+        </div>
+        <div class="card-body">
+          <div *ngIf="recentContracts.length > 0; else noContracts">
+            <div class="table-responsive">
+              <table class="table table-sm table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Amount</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let contract of recentContracts">
+                    <td>
+                      <span class="badge" [ngClass]="getContractTypeBadge(contract.typeContrat)">
+                        {{ contract.typeContrat }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge" [ngClass]="getStatusBadge(contract.statut)">
+                        {{ contract.statut }}
+                      </span>
+                    </td>
+                    <td>{{ contract.montantCotisation | currency }}</td>
+                    <td>
+                      <a [routerLink]="['/contracts', contract.id]" class="btn btn-sm btn-info">View</a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <ng-template #noContracts>
+            <p class="text-muted">No contracts found</p>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Recent Payments</h5>
+        </div>
+        <div class="card-body">
+          <div *ngIf="recentPayments.length > 0; else noPayments">
+            <div class="table-responsive">
+              <table class="table table-sm table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Type</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let payment of recentPayments">
+                    <td>{{ payment.date | date: 'short' }}</td>
+                    <td>{{ payment.montant | currency }}</td>
+                    <td>
+                      <span class="badge bg-info">{{ payment.typePaiement }}</span>
+                    </td>
+                    <td>
+                      <a [routerLink]="['/payments', payment.id]" class="btn btn-sm btn-info">View</a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <ng-template #noPayments>
+            <p class="text-muted">No payments found</p>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

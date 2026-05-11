@@ -1,0 +1,132 @@
+<div class="container-fluid mt-4">
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <h1>Insurance Contracts</h1>
+    </div>
+    <div class="col-md-4 text-end">
+      <button class="btn btn-primary" routerLink="/contracts/new">
+        <i class="bi bi-plus"></i> New Contract
+      </button>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-3">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Search by ID"
+                [(ngModel)]="searchTerm"
+                (input)="filterContracts()"
+              />
+            </div>
+            <div class="col-md-3">
+              <select
+                class="form-control"
+                [(ngModel)]="selectedStatus"
+                (change)="filterContracts()"
+              >
+                <option value="">All Statuses</option>
+                <option value="EN_COURS">En Cours</option>
+                <option value="VALIDE">Validé</option>
+                <option value="RESILIE">Résilié</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <select
+                class="form-control"
+                [(ngModel)]="selectedType"
+                (change)="filterContracts()"
+              >
+                <option value="">All Types</option>
+                <option value="AUTOMOBILE">Automobile</option>
+                <option value="HABITATION">Habitation</option>
+                <option value="SANTE">Santé</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <button class="btn btn-secondary w-100" (click)="resetFilters()">
+                Reset Filters
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <div *ngIf="loading" class="text-center">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+
+          <div *ngIf="!loading && filteredContracts.length > 0" class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Amount</th>
+                  <th>Duration</th>
+                  <th>Start Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let contract of filteredContracts">
+                  <td>{{ contract.id }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="getContractTypeBadge(contract.typeContrat)">
+                      {{ contract.typeContrat }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="badge" [ngClass]="getStatusBadge(contract.statut)">
+                      {{ contract.statut }}
+                    </span>
+                  </td>
+                  <td>{{ contract.montantCotisation | currency }}</td>
+                  <td>{{ contract.dureeContrat }} months</td>
+                  <td>{{ contract.dateDebut | date: 'short' }}</td>
+                  <td>
+                    <a [routerLink]="['/contracts', contract.id]" class="btn btn-sm btn-info me-2">
+                      View
+                    </a>
+                    <button
+                      *ngIf="hasRole('ROLE_ADMIN') || hasRole('ROLE_EMPLOYE')"
+                      (click)="editContract(contract.id)"
+                      class="btn btn-sm btn-warning me-2"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      *ngIf="hasRole('ROLE_ADMIN')"
+                      (click)="deleteContract(contract.id)"
+                      class="btn btn-sm btn-danger"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div *ngIf="!loading && filteredContracts.length === 0" class="alert alert-info">
+            No contracts found.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
